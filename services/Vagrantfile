@@ -7,12 +7,11 @@ VAGRANTFILE_API_VERSION = "2"
 SUPPLY_DIR = "provisioning"
 
 $server_box = "centos/7"
-$server_vm_cpus = 2
-# bare centos utilize ~570 MB
-$server_vm_memory = 1024
+$server_vm_cpus = 1
+# bare centos utilize ~570 MB (lol, no)
+# $server_vm_memory = 1024
 
 PROJECT = "edu"
-
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -26,6 +25,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # and can cause the network to not work properly.
     subconfig.vm.network :private_network, ip: "10.0.0.2"
     subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/centos7x86_64-nginx.sh"
+
+    subconfig.vm.provider "virtualbox" do |virtualbox|
+      virtualbox.cpus = $server_vm_cpus
+      virtualbox.memory = 256
+    end
   end
 
 
@@ -40,6 +44,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       subconfig.vm.network :private_network, ip: "10.1.0.#{i + 2}"
       subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/centos7x86_64-nodejs.sh"
       subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/git-direct-chats.sh"
+
+      subconfig.vm.provider "virtualbox" do |virtualbox|
+        virtualbox.cpus = $server_vm_cpus
+        virtualbox.memory = 384
+      end
     end
 
     $name = "#{PROJECT}--#{$service}-db-#{i}"
@@ -51,6 +60,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       # subconfig.vm.network :forwarded_port, guest: 5432, host: 15432
       subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/centos7x86_64-postgres.sh"
       subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/postgres-direct-chats.sh"
+
+      subconfig.vm.provider "virtualbox" do |virtualbox|
+        virtualbox.cpus = $server_vm_cpus
+        virtualbox.memory = 512
+      end
     end
   end
 
@@ -58,10 +72,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # boxes will only be checked for updates when the user runs
   # `vagrant box outdated`. This is not recommended.
   # config.vm.box_check_update = false
-
-  config.vm.provider "virtualbox" do |virtualbox|
-    virtualbox.cpus = $server_vm_cpus
-    virtualbox.memory = $server_vm_memory
-  end
 
 end
