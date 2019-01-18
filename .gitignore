@@ -1,6 +1,8 @@
 .DS_Store
-node_modules
-/dist
+
+.vagrant/
+
+node_modules/
 
 # local env files
 .env.local
@@ -20,5 +22,8 @@ yarn-error.log*
 *.sln
 *.sw*
 
-#Electron-builder output
-/dist_electron
+# Electron-builder output
+dist_electron/
+
+# Default builder output
+dist/
