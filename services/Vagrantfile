@@ -18,10 +18,21 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = $server_box
 
-  SERVICE = "direct-chats"
+  $service = "nginx-reverse-proxy"
+  $name = "#{PROJECT}--#{$service}"
+  config.vm.define $name do |subconfig|
+    subconfig.vm.hostname = $name
+    # DO NOT USE static IP ending in ".1", because is very often used by the router
+    # and can cause the network to not work properly.
+    subconfig.vm.network :private_network, ip: "10.0.0.2"
+    subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/centos7x86_64-nginx.sh"
+  end
+
+
+  $service = "direct-chats"
   NODES = 2
   (0...NODES).each do |i|
-    $name = "#{PROJECT}-#{SERVICE}-#{i}"
+    $name = "#{PROJECT}--#{$service}-#{i}"
     config.vm.define $name do |subconfig|
       subconfig.vm.hostname = $name
       # DO NOT USE static IP ending in ".1", because is very often used by the router
@@ -31,7 +42,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       subconfig.vm.provision "shell", path: "#{SUPPLY_DIR}/git-direct-chats.sh"
     end
 
-    $name = "#{PROJECT}-#{SERVICE}-db-#{i}"
+    $name = "#{PROJECT}--#{$service}-db-#{i}"
     config.vm.define $name do |subconfig|
       subconfig.vm.hostname = $name
       # DO NOT USE static IP ending in ".1", because is very often used by the router
