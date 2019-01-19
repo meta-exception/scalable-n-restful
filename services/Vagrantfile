@@ -17,10 +17,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.box = $server_box
 
-  $service = "nginx-reverse-proxy"
-  $name = "#{PROJECT}--#{$service}"
-  config.vm.define $name do |subconfig|
-    subconfig.vm.hostname = $name
+  $proxy = "#{PROJECT}--nginx-reverse-proxy"
+  config.vm.define $proxy do |subconfig|
+    subconfig.vm.hostname = $proxy
     # DO NOT USE static IP ending in ".1", because is very often used by the router
     # and can cause the network to not work properly.
     subconfig.vm.network :private_network, ip: "10.0.0.2"
@@ -33,12 +32,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
 
 
-  $service = "direct-chats"
   NODES = 2
   (0...NODES).each do |i|
-    $name = "#{PROJECT}--#{$service}-#{i}"
-    config.vm.define $name do |subconfig|
-      subconfig.vm.hostname = $name
+    $service = "#{PROJECT}--direct-chats-#{i}"
+    config.vm.define $service do |subconfig|
+      subconfig.vm.hostname = $service
       # DO NOT USE static IP ending in ".1", because is very often used by the router
       # and can cause the network to not work properly.
       subconfig.vm.network :private_network, ip: "10.1.0.#{i + 2}"
@@ -51,9 +49,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       end
     end
 
-    $name = "#{PROJECT}--#{$service}-db-#{i}"
-    config.vm.define $name do |subconfig|
-      subconfig.vm.hostname = $name
+    $db = "#{PROJECT}--direct-chats-db-#{i}"
+    config.vm.define $db do |subconfig|
+      subconfig.vm.hostname = $db
       # DO NOT USE static IP ending in ".1", because is very often used by the router
       # and can cause the network to not work properly.
       subconfig.vm.network :private_network, ip: "10.2.0.#{i + 2}"
