@@ -7,7 +7,7 @@ const DB_SHARDS = 2;
 
 const pools = configs(DB_SHARDS).map((config) => new Pool(config));
 
-const sendMessage = async (fromUserId: number, toUserId: number, message: any[]) => {
+const sendMessage = async (fromUserId: number, toUserId: number, message: [number, Date, string]) => {
   const fromClient = await pools[fromUserId % DB_SHARDS].connect();
   const toClient = await pools[toUserId % DB_SHARDS].connect();
   try {
