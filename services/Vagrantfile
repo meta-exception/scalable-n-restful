@@ -34,9 +34,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   NODES = 2
   (0...NODES).each do |i|
-    $service = "#{PROJECT}--direct-chats-#{i}"
-    config.vm.define $service do |subconfig|
-      subconfig.vm.hostname = $service
+    config.vm.define "#{PROJECT}--direct-chats-#{i}" do |subconfig|
+      # Each hostname must be defined individually
+      if i==0
+        subconfig.vm.hostname = "#{PROJECT}--direct-chats-0"
+      elsif i==1
+        subconfig.vm.hostname = "#{PROJECT}--direct-chats-1"
+      end
+
       # DO NOT USE static IP ending in ".1", because is very often used by the router
       # and can cause the network to not work properly.
       subconfig.vm.network :private_network, ip: "10.1.0.#{i + 2}"

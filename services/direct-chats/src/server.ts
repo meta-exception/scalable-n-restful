@@ -1,9 +1,18 @@
+import os = require('os');
+
+const hostname = os.hostname();
+
 import express = require('express');
 import db from './db';
 
 const PORT = 8080;
 
 const app = express();
+
+app.use((req, res, next) => {
+  res.setHeader('X-Powered-By', hostname);
+  next();
+});
 
 // use json format for API
 app.use(express.json());
