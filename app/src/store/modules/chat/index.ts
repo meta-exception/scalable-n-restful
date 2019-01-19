@@ -3,7 +3,7 @@ import { ActionTree, GetterTree, Module } from 'vuex';
 import { ChatState } from './chatState';
 import { State as RootState } from '../../state';
 import * as types from '../../mutation-types';
-import axios from '../../../api/axios';
+import axios from '../../../api';
 
 const state: ChatState = {
   currentChatHistory: [],
