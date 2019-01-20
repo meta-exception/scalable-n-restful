@@ -1,0 +1,15 @@
+# Blacklist files/folders in same directory as the .gitignore file
+/*
+
+# Whitelist .gitignore and README.md
+!.gitignore
+!README.md
+!LICENSE
+
+# Whitelist service's `dist` folders
+!services/
+services/*
+!services/*/
+services/*/*
+!services/*/dist
+!services/*/package.json
