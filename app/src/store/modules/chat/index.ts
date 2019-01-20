@@ -10,6 +10,9 @@ const state: ChatState = {
 };
 
 const getters: GetterTree<ChatState, RootState> = {
+  loggedIn: (state, getters, rootState) => {
+    return rootState.access_token;
+  },
   currentChatHistory: (state: ChatState) => {
     return state.currentChatHistory;
   },
@@ -22,20 +25,25 @@ const mutations = {
 };
 
 const actions: ActionTree<ChatState, RootState> = {
-  async loadChatHistory({ commit }, payload: { fromUserId: number, toUserId: number }) {
-    const { fromUserId, toUserId } = payload;
+  async loadChatHistory({ commit, rootState }, payload: { toUserId: number }) {
+    const { toUserId } = payload;
+    const access_token = rootState.access_token;
     try {
-      const { data } = await axios.get(`/chats/direct/${toUserId}`, { params: { access_token: fromUserId } });
+      const { data } = await axios.get(`/chats/direct/${toUserId}`, { params: { access_token } });
       commit(types.CHAT_SET_CURRENT_HISTORY, data);
     } catch (err) {
       console.error(err);
     }
   },
-  async sendChatMessage({ dispatch }, payload: { fromUserId: number, toUserId: number, message: string }) {
-    const { fromUserId, toUserId, message } = payload;
+  clearChatHistory({ commit }) {
+    commit(types.CHAT_SET_CURRENT_HISTORY, []);
+  },
+  async sendChatMessage({ dispatch, rootState }, payload: { toUserId: number, message: string }) {
+    const { toUserId, message } = payload;
+    const access_token = rootState.access_token;
     try {
-      const msg = await axios.post(`/chats/direct/${toUserId}`, { message }, { params: { access_token: fromUserId } });
-      dispatch('loadChatHistory', { fromUserId, toUserId });
+      const msg = await axios.post(`/chats/direct/${toUserId}`, { message }, { params: { access_token } });
+      dispatch('loadChatHistory', { toUserId });
     } catch (err) {
       console.error(err);
     }

@@ -1,7 +1,4 @@
 import os = require('os');
-
-const hostname = os.hostname();
-
 import express = require('express');
 import db from './db';
 
@@ -9,6 +6,7 @@ const PORT = 8080;
 
 const app = express();
 
+const hostname = os.hostname();
 app.use((req, res, next) => {
   res.setHeader('X-Powered-By', hostname);
   next();
@@ -18,7 +16,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // send message to user
-app.post('/chats/direct/:toUserId', async (req, res) => {
+app.post('/api/chats/direct/:toUserId', async (req, res) => {
   const fromUserId = req.query.access_token;
   const { toUserId } = req.params;
   const { message } = req.body;
@@ -31,7 +29,7 @@ app.post('/chats/direct/:toUserId', async (req, res) => {
 });
 
 // get all messages in chat
-app.get('/chats/direct/:toUserId', async (req, res) => {
+app.get('/api/chats/direct/:toUserId', async (req, res) => {
   const fromUserId = req.query.access_token;
   const { toUserId } = req.params;
   try {
